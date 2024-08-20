@@ -1,6 +1,6 @@
-NAME = Serialization
+NAME = easyfind
 CXXFLAGS =  -Wall -Wextra -Werror -std=c++98
-SRC = serializer.cpp main.cpp
+SRC =  main.cpp 
 OBJS = $(SRC:.cpp=.o)
 
 all: $(NAME)
@@ -20,3 +20,4 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re
+ 

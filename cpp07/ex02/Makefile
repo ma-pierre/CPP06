@@ -1,6 +1,6 @@
 NAME = Array
 CXXFLAGS =  -Wall -Wextra -Werror -std=c++98
-SRC =  main.cpp
+SRC =  main.cpp 
 OBJS = $(SRC:.cpp=.o)
 
 all: $(NAME)
