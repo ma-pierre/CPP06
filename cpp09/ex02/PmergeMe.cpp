@@ -1,188 +1,110 @@
-
 #include "PmergeMe.hpp"
+
 
 void printVector(const std::vector<unsigned int> &vec)
 {
-    size_t i;
-    i = 0;
-    while (i < vec.size())
-    {
+    for (size_t i = 0; i < vec.size(); i++) {
         std::cout << vec[i] << " ";
-        i++;
     }
     std::cout << std::endl;
-}
-void insertionSort(std::vector<unsigned int> &arr)
-{
-    size_t i, j;
-    unsigned int key;
-    for (i = 1; i < arr.size(); i++)
-    {
-        key = arr[i];
-        j = i;
-        while (j > 0 && arr[j - 1] > key)
-        {
-            arr[j] = arr[j - 1];
-            j--;
-        }
-        arr[j] = key;
-    }
-}
-void insertionSort(std::deque<unsigned int> &arr)
-{
-    size_t i, j;
-    unsigned int key;
-    for (i = 1; i < arr.size(); i++)
-    {
-        key = arr[i];
-        j = i;
-        while (j > 0 && arr[j - 1] > key)
-        {
-            arr[j] = arr[j - 1];
-            j--;
-        }
-        arr[j] = key;
-    }
 }
 
 void printDeque(const std::deque<unsigned int> &deq)
 {
-    size_t i;
-    i = 0;
-    while (i < deq.size())
-    {
+    for (size_t i = 0; i < deq.size(); i++) {
         std::cout << deq[i] << " ";
-        i++;
     }
     std::cout << std::endl;
 }
 
-std::vector<std::pair<unsigned int, unsigned int> > createPairsVector(const std::vector<unsigned int> &arr)
+std::vector<unsigned int> calculateJacobsthal(size_t size)
 {
+    std::vector<unsigned int> jacobsthal;
+    jacobsthal.push_back(0);
+    if (size > 1)
+        jacobsthal.push_back(1);
+
+    for (size_t i = 2; i < size; i++) {
+        jacobsthal.push_back(jacobsthal[i - 1] + 2 * jacobsthal[i - 2]);
+    }
+
+    return (jacobsthal);
+}
+
+// Récursivité pour trier les "high" (vecteur)
+void recursiveSortHighVector(std::vector<unsigned int> &high) {
+    if (high.size() <= 1) return;
+
     std::vector<std::pair<unsigned int, unsigned int> > pairs;
-    size_t i;
-    i = 0;
-    while ((i + 1) < arr.size()) {
-        if (arr[i] > arr[i + 1]) {
-            pairs.push_back(std::make_pair(arr[i + 1], arr[i]));
-        } else {
-            pairs.push_back(std::make_pair(arr[i], arr[i + 1]));
-        }
-        i += 2;
-    }
-    return (pairs);
-}
+    std::vector<unsigned int> unpaired;
 
-std::deque<std::pair<unsigned int, unsigned int> > createPairsDeque(const std::deque<unsigned int> &arr) {
-    std::deque<std::pair<unsigned int, unsigned int> > pairs;
-    size_t i;
-    i = 0;
-    while ((i + 1) < arr.size()) {
-        if (arr[i] > arr[i + 1]) {
-            pairs.push_back(std::make_pair(arr[i + 1], arr[i]));
-        } else {
-            pairs.push_back(std::make_pair(arr[i], arr[i + 1]));
-        }
-        i += 2;
+    for (size_t i = 0; i + 1 < high.size(); i += 2) {
+        pairs.push_back(std::make_pair(std::min(high[i], high[i + 1]), std::max(high[i], high[i + 1])));
     }
-    return (pairs);
-}
 
-std::vector<unsigned int> sortHighVector(const std::vector<std::pair<unsigned int, unsigned int> > &pairs) {
-    std::vector<unsigned int> high;
-    size_t i;
-    i = 0;
-    while (i < pairs.size()) {
-        high.push_back(pairs[i].second);
-        i++;
+    if (high.size() % 2 != 0) {
+        unpaired.push_back(high.back());
     }
-    insertionSort(high);
-    return (high);
-}
 
-std::deque<unsigned int> sortHighDeque(const std::deque<std::pair<unsigned int, unsigned int> > &pairs) {
-    std::deque<unsigned int> high;
-    size_t i;
-    i = 0;
-    while (i < pairs.size()) {
-        high.push_back(pairs[i].second);
-        i++;
+    std::vector<unsigned int> newHigh;
+    for (size_t i = 0; i < pairs.size(); i++) {
+        newHigh.push_back(pairs[i].second);
     }
-    insertionSort(high);
-    return (high);
-}
 
-void insertLowVector(std::vector<unsigned int> &high, const std::vector<std::pair<unsigned int, unsigned int> > &pairs) {
-    size_t i;
-    i = 0;
-    while (i < pairs.size()) {
+    recursiveSortHighVector(newHigh);
+    high = newHigh;
+
+    std::vector<unsigned int> jacobsthal = calculateJacobsthal(pairs.size());
+    for (size_t i = 0; i < pairs.size(); i++) {
         unsigned int lowElement = pairs[i].first;
-        std::vector<unsigned int>::iterator pos = std::lower_bound(high.begin(), high.end(), lowElement);
-        high.insert(pos, lowElement);
-        i++;
+        high.insert(std::lower_bound(high.begin(), high.end(), lowElement), lowElement);
+    }
+
+    for (size_t i = 0; i < unpaired.size(); i++) {
+        high.insert(std::lower_bound(high.begin(), high.end(), unpaired[i]), unpaired[i]);
     }
 }
 
-void insertLowDeque(std::deque<unsigned int> &high, const std::deque<std::pair<unsigned int, unsigned int> > &pairs)
-{
-    size_t i;
-    i = 0;
-    while (i < pairs.size()) {
-        unsigned int lowElement = pairs[i].first;
-        std::deque<unsigned int>::iterator pos = std::lower_bound(high.begin(), high.end(), lowElement);
-        high.insert(pos, lowElement);
-        i++;
-    }
-}
+// Récursivité pour trier les "high" (deque)
+void recursiveSortHighDeque(std::deque<unsigned int> &high) {
+    if (high.size() <= 1) return;
 
-void insertLastElementVector(std::vector<unsigned int> &high, unsigned int lastElement)
-{
-    std::vector<unsigned int>::iterator pos = std::lower_bound(high.begin(), high.end(), lastElement);
-    high.insert(pos, lastElement);
-}
-
-void insertLastElementDeque(std::deque<unsigned int> &high, unsigned int lastElement)
-{
-    std::deque<unsigned int>::iterator pos = std::lower_bound(high.begin(), high.end(), lastElement);
-    high.insert(pos, lastElement);
-}
-
-void sortVector(std::vector<unsigned int> &arr)
-{
-    bool odd;
-    unsigned int lastElement;
-    std::vector<std::pair<unsigned int, unsigned int> > pairs;
-    std::vector<unsigned int> high;
-
-    odd = (arr.size() % 2 != 0);
-    if (odd) {
-        lastElement = arr.back();
-    }
-    pairs = createPairsVector(arr);
-    high = sortHighVector(pairs);
-    insertLowVector(high, pairs);
-    if (odd) {
-        insertLastElementVector(high, lastElement);
-    }
-    arr = high;
-}
-
-void sortDeque(std::deque<unsigned int> &arr)
-{
-    bool odd;
-    unsigned int lastElement;
     std::deque<std::pair<unsigned int, unsigned int> > pairs;
-    std::deque<unsigned int> high;
+    std::deque<unsigned int> unpaired;
 
-    odd = (arr.size() % 2 != 0);
-    if (odd) {
-        lastElement = arr.back();
+    for (size_t i = 0; i + 1 < high.size(); i += 2) {
+        pairs.push_back(std::make_pair(std::min(high[i], high[i + 1]), std::max(high[i], high[i + 1])));
     }
-    pairs = createPairsDeque(arr);
-    high = sortHighDeque(pairs);
-    insertLowDeque(high, pairs);
-    if (odd) {
-        insertLastElementDeque(high, lastElement);
+
+    if (high.size() % 2 != 0) {
+        unpaired.push_back(high.back());
     }
-    arr = high;
+
+    std::deque<unsigned int> newHigh;
+    for (size_t i = 0; i < pairs.size(); i++) {
+        newHigh.push_back(pairs[i].second);
+    }
+
+    recursiveSortHighDeque(newHigh);
+    high = newHigh;
+
+    std::vector<unsigned int> jacobsthal = calculateJacobsthal(pairs.size());
+    for (size_t i = 0; i < pairs.size(); i++) {
+        unsigned int lowElement = pairs[i].first;
+        high.insert(std::lower_bound(high.begin(), high.end(), lowElement), lowElement);
+    }
+
+    for (size_t i = 0; i < unpaired.size(); i++) {
+        high.insert(std::lower_bound(high.begin(), high.end(), unpaired[i]), unpaired[i]);
+    }
+}
+
+// Tri principal pour les vecteurs
+void sortVector(std::vector<unsigned int> &arr) {
+    recursiveSortHighVector(arr);
+}
+
+// Tri principal pour les deques
+void sortDeque(std::deque<unsigned int> &arr) {
+    recursiveSortHighDeque(arr);
 }

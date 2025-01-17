@@ -1,4 +1,3 @@
-// PmergeMe.hpp
 #ifndef PMERGEME_HPP
 #define PMERGEME_HPP
 
@@ -12,18 +11,17 @@
 #include <cstdlib>
 #include <stdexcept>
 
+// Fonctions d'impression
 void printVector(const std::vector<unsigned int> &vec);
 void printDeque(const std::deque<unsigned int> &deq);
+
+// Algorithme Ford-Johnson
 void sortVector(std::vector<unsigned int> &arr);
 void sortDeque(std::deque<unsigned int> &arr);
-void insertionSort(std::vector<unsigned int> &arr);
-void insertionSort(std::deque<unsigned int> &arr);
-std::vector<std::pair<unsigned int, unsigned int> > createPairsVector(const std::vector<unsigned int> &arr);
-void insertLowDeque(std::deque<unsigned int> &high, const std::deque<std::pair<unsigned int, unsigned int> > &pairs);
-std::deque<std::pair<unsigned int, unsigned int> > createPairsDeque(const std::deque<unsigned int> &arr);
-std::vector<unsigned int> sortHighVector(const std::vector<std::pair<unsigned int, unsigned int> > &pairs);
-std::deque<unsigned int> sortHighDeque(const std::deque<std::pair<unsigned int, unsigned int> > &pairs);
-void insertLastElementVector(std::vector<unsigned int> &high, unsigned int lastElement);
-void insertLastElementDeque(std::deque<unsigned int> &high, unsigned int lastElement);
+
+// Outils d'insertion et de tri
+std::vector<unsigned int> calculateJacobsthal(size_t size);
+void recursiveSortHighVector(std::vector<unsigned int> &high);
+void recursiveSortHighDeque(std::deque<unsigned int> &high);
 
 #endif
